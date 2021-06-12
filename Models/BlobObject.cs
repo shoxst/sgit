@@ -1,4 +1,5 @@
 using System;
+using System.IO;
 
 namespace sgit
 {
@@ -6,6 +7,16 @@ namespace sgit
   {
     public BlobObject() : base(ObjectType.blob)
     {
+    }
+    
+    public string CreateIfNotExists(string filePath)
+    {
+      this.Content = File.ReadAllText(filePath);
+      if (!base.Exists())
+      {
+        base.Write();
+      }
+      return base.CalculateHash();
     }
   }
 }

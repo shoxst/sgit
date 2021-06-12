@@ -21,21 +21,21 @@ namespace sgit
     }
     public bool Exists()
     {
-      return Directory.Exists(GetFilePath());
+      return File.Exists(GetTargetFilePath());
     }
     public void Write()
     {
       var cData = CompressUtil.Compress(Data);
-      var filePath = GetFilePath();
+      var filePath = GetTargetFilePath();
       Directory.CreateDirectory(Path.GetDirectoryName(filePath));
       File.WriteAllBytes(filePath, cData);
     }
 
-    private string GetFilePath() {
+    private string GetTargetFilePath() {
       var hash = CalculateHash();
       var dirName = hash.Substring(0,2);
       var fileName = hash.Substring(2);
-      return $".sgit/objects/{dirName}/{fileName}";
+      return $"{PathConst.SGIT_OBJECTS}/{dirName}/{fileName}";
     }
   }
 }
