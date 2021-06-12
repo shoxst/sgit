@@ -21,7 +21,7 @@ namespace sgit
       {
         dict.Add(fileName, hash);
       }
-      Wirte();
+      Write();
     }
 
     public static void Update(Dictionary<string, string> sub, string dirName)
@@ -36,7 +36,7 @@ namespace sgit
       {
         dict.Add(pair.Key, pair.Value);
       }
-      Wirte();
+      Write();
     }
 
     private static void Read()
@@ -52,7 +52,8 @@ namespace sgit
         }
       }
     }
-    private static void Wirte()
+    
+    private static void Write()
     {
       using (var sw = new StreamWriter(PathConst.SGIT_INDEX))
       {

@@ -5,13 +5,22 @@ namespace sgit
 {
   public class BlobObject : SgitObject
   {
-    public BlobObject() : base(ObjectType.blob)
+    public string FilePath { get; set; }
+
+    public BlobObject(string filePath) : base(ObjectType.blob)
     {
+      this.FilePath = filePath;
+    }
+
+    public BlobObject(string filePath, string hash) : base(ObjectType.blob)
+    {
+      this.FilePath = filePath;
+      this.Hash = hash;
     }
     
-    public string CreateIfNotExists(string filePath)
+    public string CreateIfNotExists()
     {
-      this.Content = File.ReadAllText(filePath);
+      this.Content = File.ReadAllText(FilePath);
       if (!base.Exists())
       {
         base.Write();

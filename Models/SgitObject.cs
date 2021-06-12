@@ -10,6 +10,7 @@ namespace sgit
     public string Content { get; set; }
     public int Size { get { return Content.Length; } }
     public string Data { get {return Type + " " + Size + "\x00" + Content; } }
+    public string Hash { get; set; }
 
     public SgitObject(ObjectType type)
     {
@@ -17,7 +18,8 @@ namespace sgit
     }
     public string CalculateHash()
     {
-      return HashUtil.CalculateSHA1(Data);
+      Hash = HashUtil.CalculateSHA1(Data);
+      return Hash;
     }
     public bool Exists()
     {
