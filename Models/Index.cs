@@ -24,10 +24,16 @@ namespace sgit
       Write();
     }
 
+    public static SortedDictionary<string, string> GetIndexes()
+    {
+      Read();
+      return dict;
+    }
+
     public static void Update(Dictionary<string, string> sub, string dirName)
     {
       Read();
-      var itemsToRemove = dict.Where(item => item.Key.StartsWith($"{dirName}/")).ToArray();
+      var itemsToRemove = dict.Where(item => item.Key.StartsWith($"{dirName}")).ToArray();
       foreach (var item in itemsToRemove)
       {
         dict.Remove(item.Key);
@@ -42,7 +48,7 @@ namespace sgit
     private static void Read()
     {
       dict = new SortedDictionary<string, string>();
-      using (var sr = new StreamReader(PathConst.SGIT_INDEX))
+      using (var sr = new StreamReader(PathUtil.SGIT_INDEX))
       {
         string line;
         while ((line = sr.ReadLine()) != null)
@@ -55,7 +61,7 @@ namespace sgit
     
     private static void Write()
     {
-      using (var sw = new StreamWriter(PathConst.SGIT_INDEX))
+      using (var sw = new StreamWriter(PathUtil.SGIT_INDEX))
       {
         foreach (var item in dict)
         {

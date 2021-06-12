@@ -9,29 +9,32 @@ namespace sgit
   {
     public static void Exec(string path)
     {
-      if (!File.Exists(PathConst.SGIT_INDEX))
+      if (!File.Exists(PathUtil.SGIT_INDEX))
       {
-        File.Create(PathConst.SGIT_INDEX);
+        File.Create(PathUtil.SGIT_INDEX);
       }
+
+      var sgitPath = path == PathUtil.SGIT_REPOSITORY ? "" : PathUtil.GetSgitFilePath(path);
 
       if (File.Exists(path))
       {
-        var filePath = path;
-        var blob = new BlobObject(filePath);
+        var sgitFilePath = sgitPath;
+        var blob = new BlobObject(sgitFilePath);
         var hash = blob.CreateIfNotExists();
-        Index.Update(filePath, hash);
+        Index.Update(sgitFilePath, hash);
       }
       else
       {
         var sub = new Dictionary<string, string>();
         foreach (var filePath in Directory.EnumerateFiles(path, "*", SearchOption.AllDirectories)
-                                  .Where(filePath => !filePath.StartsWith(PathConst.SGIT_DOTSGIT)))
+                                  .Where(filePath => !filePath.StartsWith(PathUtil.SGIT_DOTSGIT)))
         {
-          var blob = new BlobObject(filePath);
+          var sgitFilePath = PathUtil.GetSgitFilePath(filePath);
+          var blob = new BlobObject(sgitFilePath);
           var hash = blob.CreateIfNotExists();
-          sub.Add(filePath, hash);
+          sub.Add(sgitFilePath, hash);
         }
-        Index.Update(sub, path);
+        Index.Update(sub, sgitPath);
       }
     }
   }

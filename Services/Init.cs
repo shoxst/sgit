@@ -7,12 +7,12 @@ namespace sgit
   {
     public static void Exec()
     {
-      if (!Directory.Exists(PathConst.SGIT_DOTSGIT))
+      if (!Directory.Exists(PathUtil.SGIT_DOTSGIT))
       {
-        Directory.CreateDirectory(PathConst.SGIT_OBJECTS);
-        Directory.CreateDirectory(PathConst.SGIT_REFS_HEADS);
-        Directory.CreateDirectory(PathConst.SGIT_REFS_TAGS);
-        File.WriteAllText(PathConst.SGIT_HEAD, "ref: refs/heads/main\n");
+        Directory.CreateDirectory(PathUtil.SGIT_OBJECTS);
+        Directory.CreateDirectory(PathUtil.SGIT_REFS_HEADS);
+        Directory.CreateDirectory(PathUtil.SGIT_REFS_TAGS);
+        File.WriteAllText(PathUtil.SGIT_HEAD, "ref: refs/heads/main\n");
       }
       else
       {

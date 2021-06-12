@@ -8,5 +8,10 @@ namespace sgit
     public CommitObject() : base(ObjectType.commit)
     {
     }
+    
+    protected override string CalculateHash()
+    {
+      throw new NotImplementedException();
+    }
   }
 }

@@ -8,8 +8,6 @@ namespace sgit
 {
   public static class CompressUtil
   {
-    public static byte[] Compress(string str) => Compress(new UTF8Encoding().GetBytes(str));
-
     public static byte[] Compress(byte[] src)
     {
       byte[] csrc;

@@ -8,8 +8,6 @@ namespace sgit
     {
       if (args.Length == 0)
       {
-        var b = new BlobObject($"{PathConst.SGIT_REPOSITORY}/file1.txt");
-        b.CreateIfNotExists();
         return;
       }
       
@@ -24,7 +22,8 @@ namespace sgit
           break;
         
         case "commit":
-          Commit.Exec(args[2]);
+          string message = args.Length == 1 ? "" : args[2];
+          Commit.Exec(message);
           break;
 
         default:
