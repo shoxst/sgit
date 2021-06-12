@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 
 namespace sgit
 {
@@ -6,7 +7,15 @@ namespace sgit
   {
     static void Main(string[] args)
     {
-      Console.WriteLine("Hello World!");
+      var b = new BlobObject();
+      b.Content = "hello\n";
+      b.Write();
+    }
+
+    public static void ShowBytes(byte[] bs)
+    {
+      Array.ForEach(bs, b => Console.Write($"0x{b:x2} "));
+      Console.WriteLine("");
     }
   }
 }
