@@ -1,3 +1,5 @@
+using System;
+
 namespace sgit
 {
   public class UserInfo
@@ -7,12 +9,12 @@ namespace sgit
     public int DateSeconds { get; set; }
     public string DateTimezone { get; set; }
 
-    public UserInfo(string name, string email, int dateSeconds, string dateTimezone)
+    public UserInfo(string name, string email, int dateSeconds)
     {
       Name = name;
       Email = email;
       DateSeconds = dateSeconds;
-      DateTimezone = dateTimezone;
+      DateTimezone = TimeZoneInfo.Local.DisplayName.Substring(4,6).Replace(":","");
     }
   }
 }

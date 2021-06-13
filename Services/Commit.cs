@@ -5,24 +5,35 @@ namespace sgit
 {
   public static class Commit
   {
-    public static void Exec(string message)
+    public static void Exec(string[] args)
     {
-      var indexes = Index.GetIndexes();
-      var root = new TreeObject("");
-      foreach (var index in indexes)
+      if (args.Length < 3 || args[1] != "-m")
       {
-        var dirs = index.Key.Contains("/") ? index.Key.Split('/') : new string[] {index.Key};
-        AddChild(index.Value, root, dirs, 0);
+        Console.WriteLine("use 'sgit commit -m \"{message}\"");
+        return;
       }
-
+      var message = args[2].Trim('\"');
+      
+      // Create tree object from index and write file
+      var dict = Index.GetDictionary();
+      var root = new TreeObject("");
+      foreach (var item in dict)
+      {
+        var dirs = item.Key.Contains("/") ? item.Key.Split('/') : new string[] {item.Key};
+        AddChild(item.Value, root, dirs, 0);
+      }
       var rootTreeHash = root.WriteTree();
+
+      // Create commit object and write file
       var currentCommit = Reference.GetHeadCommit();
-      var parents = currentCommit == null ? null : new string[] { currentCommit };
-      var author = new UserInfo("*****", "*****", 1623566933, "+0900");
-      var committer = new UserInfo("*****", "*****", 1623566933, "+0900");
+      var parents = currentCommit == null ? null : new string[] {currentCommit};
+      var seconds = (int)DateTimeOffset.Now.ToUnixTimeSeconds();
+      var author = new UserInfo("*****", "*****", seconds);
+      var committer = new UserInfo("*****", "*****", seconds);
       var commit = new CommitObject(rootTreeHash, parents, author, committer, message);
       var newCommit = commit.Write();
 
+      // Update reference
       Reference.SetHeadCommit(newCommit);
     }
     

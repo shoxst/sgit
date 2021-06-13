@@ -11,6 +11,7 @@ namespace sgit
         return;
       }
       
+      // sgit command
       switch (args[0])
       {
         case "init":
@@ -18,12 +19,15 @@ namespace sgit
           break;
 
         case "add":
-          Add.Exec(args[1]);
+          Add.Exec(args);
           break;
         
         case "commit":
-          string message = args.Length == 1 ? "" : args[2].Trim('\"');
-          Commit.Exec(message);
+          Commit.Exec(args);
+          break;
+
+        case "branch":
+          Branch.Exec(args);
           break;
 
         default:

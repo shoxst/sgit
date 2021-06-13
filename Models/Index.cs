@@ -24,7 +24,7 @@ namespace sgit
       Write();
     }
 
-    public static SortedDictionary<string, string> GetIndexes()
+    public static SortedDictionary<string, string> GetDictionary()
     {
       Read();
       return dict;
