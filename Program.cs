@@ -29,6 +29,10 @@ namespace sgit
         case "branch":
           Branch.Exec(args);
           break;
+        
+        case "status":
+          Status.Exec();
+          break;
 
         default:
           Console.WriteLine("argument error");

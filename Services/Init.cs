@@ -12,7 +12,6 @@ namespace sgit
         Console.WriteLine("This directory is already sgit repository");
         return;
       }
-
       Directory.CreateDirectory(PathUtil.SGIT_OBJECTS);
       Directory.CreateDirectory(PathUtil.SGIT_REFS_HEADS);
       Directory.CreateDirectory(PathUtil.SGIT_REFS_TAGS);

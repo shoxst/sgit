@@ -14,14 +14,8 @@ namespace sgit
       }
       var message = args[2].Trim('\"');
       
-      // Create tree object from index and write file
-      var dict = Index.GetDictionary();
-      var root = new TreeObject("");
-      foreach (var item in dict)
-      {
-        var dirs = item.Key.Contains("/") ? item.Key.Split('/') : new string[] {item.Key};
-        AddChild(item.Value, root, dirs, 0);
-      }
+      // Create tree object and write file
+      var root = Index.GetRootTreeFromIndex();
       var rootTreeHash = root.WriteTree();
 
       // Create commit object and write file
@@ -36,24 +30,5 @@ namespace sgit
       // Update reference
       Reference.SetHeadCommit(newCommit);
     }
-    
-    private static void AddChild(string blobHash, TreeObject tree, string[] dirs, int depth)
-    {
-      if (depth == dirs.Length - 1)
-      {
-        var sgitFilePath = string.Join('/', dirs);
-        tree.Children.Add(new BlobObject(sgitFilePath, blobHash));
-        return;
-      }
-      if (!tree.Children.Any(child => MatchDirName(child, dirs[depth])))
-      {
-        tree.Children.Add(new TreeObject(dirs[depth]));
-      }
-      var nextTree = (TreeObject)tree.Children.Find(child => MatchDirName(child, dirs[depth]));
-      AddChild(blobHash, nextTree, dirs, depth + 1);
-    }
-
-    private static bool MatchDirName(SgitObject child, string dirName) =>
-      child.Type == ObjectType.tree && ((TreeObject)child).DirName == dirName;
   }
 }

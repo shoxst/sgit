@@ -35,8 +35,7 @@ namespace sgit
       {
         // when argument is directory
         var sub = new Dictionary<string, string>();
-        foreach (var filePath in Directory.EnumerateFiles(path, "*", SearchOption.AllDirectories)
-                                  .Where(filePath => !filePath.StartsWith(PathUtil.SGIT_DOTSGIT)))
+        foreach (var filePath in PathUtil.GetAllFilesUnderPath(path, true))
         {
           var sgitFilePath = PathUtil.GetSgitFilePath(filePath);
           var blob = new BlobObject(sgitFilePath);

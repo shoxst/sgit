@@ -16,6 +16,7 @@ namespace sgit
       this.FileContent = File.ReadAllText(PathUtil.GetFilePath(FilePath));
       this.Size = FileContent.Length;
       this.Data = Header + FileContent;
+      this.Hash = CalculateHash();
     }
 
     public BlobObject(string filePath, string hash) : base(ObjectType.blob)
@@ -33,7 +34,7 @@ namespace sgit
       {
         base.Write(Data);
       }
-      return CalculateHash();
+      return Hash;
     }
   }
 }

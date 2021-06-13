@@ -1,4 +1,6 @@
 using System.IO;
+using System.Linq;
+using System.Collections.Generic;
 
 namespace sgit
 {
@@ -18,5 +20,18 @@ namespace sgit
 
     public static string GetFilePath(string sgitFilePath) =>
       Path.Combine(SGIT_REPOSITORY, sgitFilePath);
+
+    public static List<string> GetAllFilesUnderPath(string path, bool exceptDotSgit)
+    {
+      if (exceptDotSgit)
+      {
+        return Directory.EnumerateFiles(path, "*", SearchOption.AllDirectories)
+          .Where(filePath => !filePath.StartsWith(PathUtil.SGIT_DOTSGIT)).ToList(); 
+      }
+      else
+      {
+        return Directory.EnumerateFiles(path, "*", SearchOption.AllDirectories).ToList();
+      }
+    }
   }
 }

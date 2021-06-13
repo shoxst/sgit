@@ -7,19 +7,19 @@ namespace sgit
 {
   public static class Index
   {
-    // Key: fileName, Value: hash
+    // Key: sgitFilePath, Value: hash
     private static SortedDictionary<string, string> dict;
     
-    public static void Update(string fileName, string hash)
+    public static void Update(string sgitFilePath, string hash)
     {
       Read();
-      if (dict.ContainsKey(fileName))
+      if (dict.ContainsKey(sgitFilePath))
       {
-        dict[fileName] = hash;
+        dict[sgitFilePath] = hash;
       }
       else
       {
-        dict.Add(fileName, hash);
+        dict.Add(sgitFilePath, hash);
       }
       Write();
     }
@@ -44,6 +44,37 @@ namespace sgit
       }
       Write();
     }
+
+    public static TreeObject GetRootTreeFromIndex()
+    {
+      Read();
+      var root = new TreeObject("");
+      foreach (var item in dict)
+      {
+        var dirs = item.Key.Contains("/") ? item.Key.Split('/') : new string[] {item.Key};
+        AddChildObject(item.Value, root, dirs, 0);
+      }
+      return root;
+    }
+
+    private static void AddChildObject(string blobHash, TreeObject tree, string[] dirs, int depth)
+    {
+      if (depth == dirs.Length - 1)
+      {
+        var sgitFilePath = string.Join('/', dirs);
+        tree.Children.Add(new BlobObject(sgitFilePath, blobHash));
+        return;
+      }
+      if (!tree.Children.Any(child => MatchDirName(child, dirs[depth])))
+      {
+        tree.Children.Add(new TreeObject(dirs[depth]));
+      }
+      var nextTree = (TreeObject)tree.Children.Find(child => MatchDirName(child, dirs[depth]));
+      AddChildObject(blobHash, nextTree, dirs, depth + 1);
+    }
+
+    private static bool MatchDirName(SgitObject child, string dirName) =>
+      child.Type == ObjectType.tree && ((TreeObject)child).DirName == dirName;
 
     private static void Read()
     {
