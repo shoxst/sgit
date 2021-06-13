@@ -22,7 +22,7 @@ namespace sgit
           break;
         
         case "commit":
-          string message = args.Length == 1 ? "" : args[2];
+          string message = args.Length == 1 ? "" : args[2].Trim('\"');
           Commit.Exec(message);
           break;
 

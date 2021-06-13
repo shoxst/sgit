@@ -11,7 +11,6 @@ namespace sgit
     public ObjectType Type { get; set; }
     public int Size { get; set; }
     public string Header { get { return Type + " " + Size + "\x00"; } }
-    public string Hash { get; set; }
 
     public SgitObject(ObjectType type)
     {
@@ -20,15 +19,11 @@ namespace sgit
 
     protected abstract string CalculateHash();
 
-    public bool Exists()
-    {
-      return File.Exists(GetTargetFilePath());
-    }
+    public bool Exists() =>
+      File.Exists(GetTargetFilePath());
 
-    public void Write(string data)
-    {
+    public void Write(string data) =>
       Write(new UTF8Encoding().GetBytes(data));
-    }
 
     public void Write(byte[] data)
     {

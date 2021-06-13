@@ -10,7 +10,7 @@
       "request": "launch",
       "preLaunchTask": "build",
       "program": "${workspaceFolder}/bin/Debug/netcoreapp5.0/sgit.dll",
-      "args": ["commit"],
+      "args": ["commit", "-m", "Initial commit"],
       "cwd": "${workspaceFolder}",
       "console": "internalConsole",
       "stopAtEntry": false

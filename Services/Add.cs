@@ -11,7 +11,7 @@ namespace sgit
     {
       if (!File.Exists(PathUtil.SGIT_INDEX))
       {
-        File.Create(PathUtil.SGIT_INDEX);
+        File.Create(PathUtil.SGIT_INDEX).Close();
       }
 
       var sgitPath = path == PathUtil.SGIT_REPOSITORY ? "" : PathUtil.GetSgitFilePath(path);
@@ -20,7 +20,7 @@ namespace sgit
       {
         var sgitFilePath = sgitPath;
         var blob = new BlobObject(sgitFilePath);
-        var hash = blob.CreateIfNotExists();
+        var hash = blob.Write();
         Index.Update(sgitFilePath, hash);
       }
       else
@@ -31,7 +31,7 @@ namespace sgit
         {
           var sgitFilePath = PathUtil.GetSgitFilePath(filePath);
           var blob = new BlobObject(sgitFilePath);
-          var hash = blob.CreateIfNotExists();
+          var hash = blob.Write();
           sub.Add(sgitFilePath, hash);
         }
         Index.Update(sub, sgitPath);

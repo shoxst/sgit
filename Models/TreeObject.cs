@@ -21,12 +21,10 @@ namespace sgit
       Children = new List<SgitObject>();
     }
 
-    protected override string CalculateHash()
-    {
-      return HashUtil.CalculateSHA1(Data.ToArray());
-    }
+    protected override string CalculateHash() =>
+      HashUtil.CalculateSHA1(Data.ToArray());
 
-    public string Create()
+    public string WriteTree()
     {
       foreach (var child in Children)
       {
@@ -40,16 +38,16 @@ namespace sgit
         {
           var tree = (TreeObject)child;
           Content.AddRange(new UTF8Encoding().GetBytes($"40000 {tree.DirName}\x00"));
-          Content.AddRange(HashUtil.GetBytes(tree.Create()));
+          Content.AddRange(HashUtil.GetBytes(tree.WriteTree()));
         }
       }
-      Size = Content.ToArray().Length;
+      Size = Buffer.ByteLength(Content.ToArray());
       Data.AddRange(new UTF8Encoding().GetBytes(Header));
-      Data.AddRange(Content.ToArray());
-      return CreateIfNotExists();
+      Data.AddRange(Content);
+      return this.Write();
     }
 
-    public string CreateIfNotExists()
+    private string Write()
     {
       if (!base.Exists())
       {

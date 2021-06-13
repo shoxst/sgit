@@ -7,7 +7,8 @@ namespace sgit
 {
   public static class HashUtil
   {
-    public static string CalculateSHA1(string src) => CalculateSHA1(new UTF8Encoding().GetBytes(src));
+    public static string CalculateSHA1(string src) =>
+      CalculateSHA1(new UTF8Encoding().GetBytes(src));
 
     public static string CalculateSHA1(byte[] src)
     {
