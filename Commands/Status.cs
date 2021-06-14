@@ -69,10 +69,12 @@ namespace sgit
        List<string> modifiedFiles, List<string> deletedFiles, List<string> newFiles)
     {
       Console.WriteLine("Changes to be commited");
+      Console.ForegroundColor = ConsoleColor.Green;
       modifiedFiles.ForEach(file => Console.WriteLine($"\tmodified:\t{file}"));
       deletedFiles.ForEach(file => Console.WriteLine($"\tdeleted:\t{file}"));
       newFiles.ForEach(file => Console.WriteLine($"\tnew file:\t{file}"));
       Console.WriteLine();
+      Console.ResetColor();
     }
 
     private static bool CompareWorkingDirectoryAndIndex()
@@ -132,14 +134,18 @@ namespace sgit
       if (modifiedFiles.Count != 0 || deletedFiles.Count != 0)
       {
         Console.WriteLine("Changes not staged for commit");
+        Console.ForegroundColor = ConsoleColor.Red;
         modifiedFiles.ForEach(file => Console.WriteLine($"\tmodified:\t{file}"));
         deletedFiles.ForEach(file => Console.WriteLine($"\tdeleted:\t{file}"));
+        Console.ResetColor();
         Console.WriteLine();
       }
       if (untrackedFiles.Count != 0)
       {
         Console.WriteLine("Untracked files");
+        Console.ForegroundColor = ConsoleColor.Red;
         untrackedFiles.ForEach(file => Console.WriteLine($"\t{file}"));
+        Console.ResetColor();
         Console.WriteLine();
       }
     }
