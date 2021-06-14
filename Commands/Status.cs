@@ -33,6 +33,16 @@ namespace sgit
 
       // head
       var commit = Reference.GetHeadCommit();
+      if (commit == null)
+      {
+        // when no commit yet
+        foreach (var sgitFilePath in index.Keys)
+        {
+          newFiles.Add(sgitFilePath);
+        }
+        PrintIndexAndHeadInfo(modifiedFiles, deletedFiles, newFiles);
+        return true;
+      }
       var head = ObjectReader.GetBlobsFromCommit(commit);
       var copy = new Dictionary<string, string>(head);
 
