@@ -9,19 +9,73 @@ namespace sgit
   {
     public static void Exec()
     {
-      if (CompareHeadAndIndex() == 0 && CompareWorkingDirectoryAndIndex() == 0)
+      bool diffHeadAndIndex = CompareHeadAndIndex();
+      bool diffWorkingDirectoryAndIndex = CompareWorkingDirectoryAndIndex();
+      if (!diffHeadAndIndex && !diffWorkingDirectoryAndIndex)
       {
         Console.WriteLine($"On branch {Reference.GetHead()}");
         Console.WriteLine("nothing to commit, working tree clean");
       }
     }
 
-    public static int CompareHeadAndIndex()
+    public static bool CompareHeadAndIndex()
     {
-      return 0;
+      var newFiles = new List<string>();
+      var modifiedFiles = new List<string>();
+      var deletedFiles = new List<string>();
+      
+      if (!File.Exists(PathUtil.SGIT_INDEX))
+      {
+        return false;
+      }
+      // index
+      var index = Index.GetDictionary();
+
+      // head
+      var commit = Reference.GetHeadCommit();
+      var head = ObjectReader.GetBlobsFromCommit(commit);
+      var copy = new Dictionary<string, string>(head);
+
+      foreach (var item in index)
+      {
+        if (!head.TryGetValue(item.Key, out var hash))
+        {
+          // Exists in index, not in head
+          newFiles.Add(item.Key);
+          continue;
+        }
+        if (item.Value != hash)
+        {
+          // File content is different between index and head
+          modifiedFiles.Add(item.Key);
+        }
+        copy.Remove(item.Key);
+      }
+      foreach (var sgitFilePath in copy.Keys)
+      {
+        // Exists in head, not in index
+        deletedFiles.Add(sgitFilePath);
+      }
+
+      if (modifiedFiles.Count == 0 && deletedFiles.Count == 0 && newFiles.Count == 0)
+      {
+        return false;
+      }
+      PrintIndexAndHeadInfo(modifiedFiles, deletedFiles, newFiles);
+      return true;
     }
 
-    private static int CompareWorkingDirectoryAndIndex()
+    private static void PrintIndexAndHeadInfo(
+       List<string> modifiedFiles, List<string> deletedFiles, List<string> newFiles)
+    {
+      Console.WriteLine("Changes to be commited");
+      modifiedFiles.ForEach(file => Console.WriteLine($"\tmodified:\t{file}"));
+      deletedFiles.ForEach(file => Console.WriteLine($"\tdeleted:\t{file}"));
+      newFiles.ForEach(file => Console.WriteLine($"\tnew file:\t{file}"));
+      Console.WriteLine();
+    }
+
+    private static bool CompareWorkingDirectoryAndIndex()
     {
       var modifiedFiles = new List<string>();
       var deletedFiles = new List<string>();
@@ -35,7 +89,7 @@ namespace sgit
       {
         untrackedFiles.AddRange(sgitFilePaths);
         PrintWorkingDirectoryAndIndexInfo(modifiedFiles, deletedFiles, untrackedFiles);
-        return 1;
+        return true;
       }
 
       // index
@@ -66,10 +120,10 @@ namespace sgit
 
       if (modifiedFiles.Count == 0 && deletedFiles.Count == 0 && untrackedFiles.Count == 0)
       {
-        return 0;
+        return false;
       }
       PrintWorkingDirectoryAndIndexInfo(modifiedFiles, deletedFiles, untrackedFiles);
-      return 1;
+      return true;
     }
 
     private static void PrintWorkingDirectoryAndIndexInfo(

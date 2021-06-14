@@ -21,6 +21,9 @@ namespace sgit
     public static string GetFilePath(string sgitFilePath) =>
       Path.Combine(SGIT_REPOSITORY, sgitFilePath);
 
+    public static string GetObjectFilePath(string hash) =>
+      $"{PathUtil.SGIT_OBJECTS}/{hash.Substring(0,2)}/{hash.Substring(2)}";
+    
     public static List<string> GetAllFilesUnderPath(string path, bool exceptDotSgit)
     {
       if (exceptDotSgit)

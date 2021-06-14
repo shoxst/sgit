@@ -9,12 +9,12 @@ namespace sgit
     public int DateSeconds { get; set; }
     public string DateTimezone { get; set; }
 
-    public UserInfo(string name, string email, int dateSeconds)
+    public UserInfo(string name, string email, int dateSeconds, string dateTimeZone)
     {
       Name = name;
       Email = email;
       DateSeconds = dateSeconds;
-      DateTimezone = TimeZoneInfo.Local.DisplayName.Substring(4,6).Replace(":","");
+      DateTimezone = dateTimeZone;
     }
   }
 }

@@ -31,6 +31,27 @@ namespace sgit
         return ms.ToArray();
       }
     }
+
+    public static byte[] Decompress(byte[] src)
+    {
+      int zlibHeaderLength = 2;
+      int checksumLength = 4;
+      using (var ms = new MemoryStream(src, zlibHeaderLength, src.Length - zlibHeaderLength - checksumLength))
+      {
+        using (var ds = new DeflateStream(ms, CompressionMode.Decompress))
+        {
+            using (var dest = new MemoryStream())
+            {
+              ds.CopyTo(dest);
+
+              dest.Position = 0;
+              byte[] decomp = new byte[dest.Length];
+              dest.Read(decomp, 0, decomp.Length);
+              return decomp;
+            }
+        }
+      }
+    }
   }
 
   public class Adler32 : HashAlgorithm

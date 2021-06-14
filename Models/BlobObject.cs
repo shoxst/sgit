@@ -8,7 +8,7 @@ namespace sgit
     public string FilePath { get; set; }
     public string FileContent { get; set; }
     public string Data { get; set; }
-    public string Hash { get; set; }
+    public bool CanWrite { get; set; }
 
     public BlobObject(string filePath) : base(ObjectType.blob)
     {
@@ -17,12 +17,14 @@ namespace sgit
       this.Size = FileContent.Length;
       this.Data = Header + FileContent;
       this.Hash = CalculateHash();
+      this.CanWrite = true;
     }
 
     public BlobObject(string filePath, string hash) : base(ObjectType.blob)
     {
       this.FilePath = filePath;
       this.Hash = hash;
+      this.CanWrite = false;
     }
 
     protected override string CalculateHash() =>
@@ -30,6 +32,10 @@ namespace sgit
     
     public string Write()
     {
+      if (!CanWrite)
+      {
+        throw new Exception("This blob object cannot write");
+      }
       if (!base.Exists())
       {
         base.Write(Data);
