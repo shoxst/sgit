@@ -13,14 +13,12 @@ namespace sgit
         ListBranchNames();
         return;
       }
-
       // 'sgit branch {name}'
       if (args.Length == 2)
       {
         CreateNewBranch(args[1]);
         return;
       }
-
       // 'sgit branch -d {name}'
       if (args.Length == 3 && args[1] == "-d")
       {

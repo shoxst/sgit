@@ -30,7 +30,7 @@ namespace sgit
       return dict;
     }
 
-    public static void Update(Dictionary<string, string> sub, string dirName)
+    public static void Update(Dictionary<string, string> target, string dirName)
     {
       Read();
       var itemsToRemove = dict.Where(item => item.Key.StartsWith($"{dirName}")).ToArray();
@@ -38,7 +38,7 @@ namespace sgit
       {
         dict.Remove(item.Key);
       }
-      foreach (var pair in sub)
+      foreach (var pair in target)
       {
         dict.Add(pair.Key, pair.Value);
       }

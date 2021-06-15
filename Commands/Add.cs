@@ -1,5 +1,4 @@
 using System;
-using System.Linq;
 using System.IO;
 using System.Collections.Generic;
 
@@ -34,15 +33,15 @@ namespace sgit
       else
       {
         // when argument is directory
-        var sub = new Dictionary<string, string>();
+        var target = new Dictionary<string, string>();
         foreach (var filePath in PathUtil.GetAllFilesUnderPath(path, true))
         {
           var sgitFilePath = PathUtil.GetSgitFilePath(filePath);
           var blob = new BlobObject(sgitFilePath);
           var hash = blob.Write();
-          sub.Add(sgitFilePath, hash);
+          target.Add(sgitFilePath, hash);
         }
-        Index.Update(sub, sgitPath);
+        Index.Update(target, sgitPath);
       }
     }
   }

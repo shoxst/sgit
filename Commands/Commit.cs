@@ -13,7 +13,24 @@ namespace sgit
         return;
       }
       var message = args[2].Trim('\"')+'\n';
-      
+
+      // working tree status check
+      bool headIdxDiff = StatusChecker.CompareHeadAndIndex();
+      bool idxWkdDiff = StatusChecker.CompareIndexAndWorkingDirectory();
+      // when no commit object
+      if (!headIdxDiff)
+      {
+        if (!idxWkdDiff)
+        {
+          StatusChecker.PrintWorkingTreeClean();
+        }
+        else
+        {
+          StatusChecker.PrintIndexAndWorkingDirectoryDiff();
+        }
+        return;
+      }
+
       // Create tree object and write file
       var root = Index.GetRootTreeFromIndex();
       var rootTreeHash = root.WriteTree();
