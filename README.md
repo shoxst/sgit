@@ -9,3 +9,6 @@ Git implemented in C#. The hash value is calculated to be the same as git.
 - `sgit branch {name}`
 - `sgit branch -d {name}`
 - `sgit status`
+- `sgit log`
+- `sgit log -n {num}`
+- `sgit cat-file {hash}`

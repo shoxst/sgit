@@ -63,6 +63,53 @@ namespace sgit
       }
     }
 
+    public static TreeObject ReadTreeObject(string hash)
+    {
+      var filePath = PathUtil.GetObjectFilePath(hash);
+      var cData = File.ReadAllBytes(filePath);
+      var data = new List<byte>(CompressUtil.Decompress(cData));
+      var type = Encoding.UTF8.GetString(data.GetRange(0, 4).ToArray());
+      var tree = new TreeObject("");
+
+      if (type != "tree")
+      {
+        return null;
+      }
+
+      int offset = data.IndexOf(0b00) + 1;
+      while (offset < data.Count)
+      {
+        var meta = new List<byte>();
+        foreach (var b in data.GetRange(offset, data.Count - offset))
+        {
+          if (b == 0b00)
+          {
+            break;
+          }
+          else
+          {
+            offset++;
+            meta.Add(b);
+          }
+        }
+        offset++;
+        var cols = Encoding.UTF8.GetString(meta.ToArray()).Split(' ');
+        if (cols[0] == "100644")
+        {
+          tree.ChildInfos.Add(new TreeChildInfo(
+            "100644", ObjectType.blob, cols[1], HashUtil.GetString(data.GetRange(offset, 20).ToArray())));
+          offset += 20;
+        }
+        else if (cols[0] == "40000")
+        {
+          tree.ChildInfos.Add(new TreeChildInfo(
+            "040000", ObjectType.tree, cols[1], HashUtil.GetString(data.GetRange(offset, 20).ToArray())));
+          offset += 20;
+        }
+      }
+      return tree;
+    }
+
     public static CommitObject ReadCommitObject(string hash)
     {
       var filePath = PathUtil.GetObjectFilePath(hash);
@@ -73,7 +120,7 @@ namespace sgit
 
       if(lines[0].Split(' ')[0] != "commit")
       {
-        throw new Exception("This object is not commit object");
+        return null;
       }
       
       string treeHash = null;
@@ -130,7 +177,7 @@ namespace sgit
 
       if (type != "blob")
       {
-        throw new Exception("This object is not blob object");
+        return null;
       }
 
       var nullIndex = Array.IndexOf(data, (byte)0b00);

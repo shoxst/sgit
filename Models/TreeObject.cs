@@ -11,6 +11,7 @@ namespace sgit
     public List<byte> Content { get; set; }
     public List<byte> Data { get; set; }
     public List<SgitObject> Children { get; set; }
+    public List<TreeChildInfo> ChildInfos { get; set; }
     
     public TreeObject(string dirName) : base(ObjectType.tree)
     {
@@ -18,6 +19,7 @@ namespace sgit
       this.Content = new List<byte>();
       this.Data = new List<byte>();
       this.Children = new List<SgitObject>();
+      this.ChildInfos = new List<TreeChildInfo>();
     }
 
     protected override string CalculateHash() =>
@@ -32,12 +34,15 @@ namespace sgit
           var blob = (BlobObject)child;
           Content.AddRange(Encoding.UTF8.GetBytes($"100644 {blob.FileName}\x00"));
           Content.AddRange(HashUtil.GetBytes(blob.Hash));
+          ChildInfos.Add(new TreeChildInfo("100644", ObjectType.blob, blob.FileName, blob.Hash));
         }
         else
         {
           var tree = (TreeObject)child;
           Content.AddRange(Encoding.UTF8.GetBytes($"40000 {tree.DirName}\x00"));
-          Content.AddRange(HashUtil.GetBytes(tree.ConstructData()));
+          var hash = HashUtil.GetBytes(tree.ConstructData());
+          Content.AddRange(hash);
+          ChildInfos.Add(new TreeChildInfo("040000", ObjectType.tree, tree.DirName, HashUtil.GetString(hash)));
         }
       }
       Size = Buffer.ByteLength(Content.ToArray());

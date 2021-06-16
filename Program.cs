@@ -37,6 +37,10 @@ namespace sgit
         case "log":
           Log.Exec(args);
           break;
+        
+        case "cat-file":
+          CatFile.Exec(args);
+          break;
 
         default:
           Console.WriteLine("argument error");
