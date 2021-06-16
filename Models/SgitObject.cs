@@ -19,6 +19,8 @@ namespace sgit
 
     protected abstract string CalculateHash();
 
+    public abstract string Write();
+
     public bool Exists() =>
       File.Exists(PathUtil.GetObjectFilePath(Hash));
 

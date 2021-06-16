@@ -33,7 +33,8 @@ namespace sgit
 
       // Create tree object and write file
       var root = Index.GetRootTreeFromIndex();
-      var rootTreeHash = root.WriteTree();
+      root.ConstructData();
+      var rootTreeHash = root.Write();
 
       // Create commit object and write file
       var currentCommit = Reference.GetHeadCommit();
@@ -47,6 +48,24 @@ namespace sgit
 
       // Update reference
       Reference.SetHeadCommit(newCommit);
+
+      // print message
+      var head = Reference.GetHead();
+      Console.WriteLine($"[{head} {newCommit.Substring(0,7)}] {message.Substring(0,message.IndexOf('\n'))}");
+      int changed = StatusChecker.HeadIdxModified.Count;
+      if (changed != 0)
+      {
+        var s = changed == 1 ? "" : "s";
+        Console.WriteLine($" {changed} file{s} changed");
+      }
+      foreach (var file in StatusChecker.HeadIdxNew)
+      {
+        Console.WriteLine($" create mode 100644 {file}");
+      }
+      foreach (var file in StatusChecker.HeadIdxDeleted)
+      {
+        Console.WriteLine($" delete mode 100644 {file}");
+      }
     }
   }
 }

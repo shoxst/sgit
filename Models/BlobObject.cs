@@ -5,15 +5,15 @@ namespace sgit
 {
   public class BlobObject : SgitObject
   {
-    public string FilePath { get; set; }
+    public string FileName { get; set; }
     public string FileContent { get; set; }
     public string Data { get; set; }
     private bool canWrite;
 
     public BlobObject(string filePath) : base(ObjectType.blob)
     {
-      this.FilePath = filePath;
-      this.FileContent = File.ReadAllText(PathUtil.GetFilePath(FilePath));
+      this.FileName = Path.GetFileName(filePath);
+      this.FileContent = File.ReadAllText(PathUtil.GetFilePath(filePath));
       this.Size = FileContent.Length;
       this.Data = Header + FileContent;
       this.Hash = CalculateHash();
@@ -22,7 +22,7 @@ namespace sgit
 
     public BlobObject(string filePath, string hash) : base(ObjectType.blob)
     {
-      this.FilePath = filePath;
+      this.FileName = Path.GetFileName(filePath);
       this.Hash = hash;
       this.canWrite = false;
     }
@@ -30,7 +30,7 @@ namespace sgit
     protected override string CalculateHash() =>
       HashUtil.CalculateSHA1(Data);
     
-    public string Write()
+    public override string Write()
     {
       if (!canWrite)
       {

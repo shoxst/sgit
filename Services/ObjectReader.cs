@@ -1,21 +1,22 @@
 using System;
 using System.IO;
 using System.Text;
+using System.Linq;
 using System.Collections.Generic;
 
 namespace sgit
 {
   public static class ObjectReader
   {
-    public static SortedDictionary<string, string> GetBlobsFromCommit(string hash)
+    public static SortedDictionary<string, string> GetBlobHashFromCommit(string hash)
     {
       var dict = new Dictionary<string, string>();
       var commit = ReadCommitObject(hash);
-      GetBlobsFromTree(dict, commit.TreeHash, "");
+      GetBlobHashFromTree(dict, commit.TreeHash, "");
       return new SortedDictionary<string, string>(dict);
     }
 
-    public static void GetBlobsFromTree(Dictionary<string, string> dict, string hash, string dirPath)
+    public static void GetBlobHashFromTree(Dictionary<string, string> dict, string hash, string dirPath)
     {
       var filePath = PathUtil.GetObjectFilePath(hash);
       var cData = File.ReadAllBytes(filePath);
@@ -56,7 +57,7 @@ namespace sgit
         {
           string dirName = cols[1];
           string treeHash = HashUtil.GetString(data.GetRange(offset, 20).ToArray());
-          GetBlobsFromTree(dict, treeHash, $"{dirPath}{dirName}/");
+          GetBlobHashFromTree(dict, treeHash, $"{dirPath}{dirName}/");
           offset += 20;
         }
       }
@@ -95,11 +96,21 @@ namespace sgit
         }
         if (cols[0] == "author")
         {
-          author = new UserInfo(cols[1], cols[2].Trim('<', '>'), Int32.Parse(cols[3]), cols[4]);
+          var list = lines[cnt];
+          int i = list.IndexOf(' ');
+          int j = list.IndexOf('<');
+          var name = list.Substring(i+1,j-i-2);
+          var items = list.Substring(j, list.Length - j).Split(' ');
+          author = new UserInfo(name, items[0].Trim('<', '>'), Int32.Parse(items[1]), items[2]);
         }
         if (cols[0] == "committer")
         {
-          committer = new UserInfo(cols[1], cols[2].Trim('<', '>'), Int32.Parse(cols[3]), cols[4]);
+          var list = lines[cnt];
+          int i = list.IndexOf(' ');
+          int j = list.IndexOf('<');
+          var name = list.Substring(i+1,j-i-2);
+          var items = list.Substring(j, list.Length - j).Split(' ');
+          committer = new UserInfo(name, items[0].Trim('<', '>'), Int32.Parse(items[1]), items[2]);
           break;
         }
       }
@@ -108,6 +119,23 @@ namespace sgit
         sb.Append($"{lines[i]}\n");
       }
       return new CommitObject(treeHash, parents, author, committer, sb.ToString());
+    }
+
+    public static string ReadBlobObject(string hash)
+    {
+      var filePath = PathUtil.GetObjectFilePath(hash);
+      var cData = File.ReadAllBytes(filePath);
+      var data = CompressUtil.Decompress(cData);
+      var type = Encoding.UTF8.GetString(data.Take(4).ToArray());
+
+      if (type != "blob")
+      {
+        throw new Exception("This object is not blob object");
+      }
+
+      var nullIndex = Array.IndexOf(data, (byte)0b00);
+      var fileContent = Encoding.UTF8.GetString(data.Skip(nullIndex + 1).Take(data.Length - nullIndex - 1).ToArray());
+      return fileContent;
     }
   }
 }

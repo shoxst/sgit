@@ -33,6 +33,10 @@ namespace sgit
         case "status":
           Status.Exec();
           break;
+        
+        case "log":
+          Log.Exec(args);
+          break;
 
         default:
           Console.WriteLine("argument error");

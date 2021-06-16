@@ -23,32 +23,40 @@ namespace sgit
     protected override string CalculateHash() =>
       HashUtil.CalculateSHA1(Data.ToArray());
 
-    public string WriteTree()
+    public string ConstructData()
     {
       foreach (var child in Children)
       {
         if (child.Type == ObjectType.blob)
         {
           var blob = (BlobObject)child;
-          Content.AddRange(Encoding.UTF8.GetBytes($"100644 {Path.GetFileName(blob.FilePath)}\x00"));
+          Content.AddRange(Encoding.UTF8.GetBytes($"100644 {blob.FileName}\x00"));
           Content.AddRange(HashUtil.GetBytes(blob.Hash));
         }
         else
         {
           var tree = (TreeObject)child;
           Content.AddRange(Encoding.UTF8.GetBytes($"40000 {tree.DirName}\x00"));
-          Content.AddRange(HashUtil.GetBytes(tree.WriteTree()));
+          Content.AddRange(HashUtil.GetBytes(tree.ConstructData()));
         }
       }
       Size = Buffer.ByteLength(Content.ToArray());
       Data.AddRange(Encoding.UTF8.GetBytes(Header));
       Data.AddRange(Content);
       Hash = CalculateHash();
-      return this.Write();
+      return Hash;
     }
 
-    private string Write()
+    public override string Write()
     {
+      foreach (var child in Children)
+      {
+        if (child.Type == ObjectType.tree)
+        {
+          var tree = (TreeObject)child;
+          tree.Write();
+        }
+      }
       if (!base.Exists())
       {
         base.Write(Data.ToArray());
