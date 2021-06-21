@@ -56,7 +56,7 @@ namespace sgit
         Console.WriteLine($"Not a valid reference name: '{head}'");
         return;
       }
-      Reference.SetCommit(name, commit);
+      Reference.SetCommitForBranch(name, commit);
     }
 
     private static void DeleteBranch(string name)

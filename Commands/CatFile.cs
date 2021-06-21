@@ -11,45 +11,14 @@ namespace sgit
         Console.WriteLine("use 'sgit cat-file {hash}'");
       }
       var hash = args[1];
-
-      var fileContent = ObjectReader.ReadBlobObject(hash);
-      if (fileContent != null)
+      var obj = ObjectReader.ReadObject(hash);
+      if (obj != null)
       {
-        Console.WriteLine("blob");
-        Console.WriteLine(fileContent.Length);
-        Console.WriteLine(fileContent);
-        return;
+        obj.CatFile();
       }
-      
-      var tree = ObjectReader.ReadTreeObject(hash);
-      if (tree != null)
+      else
       {
-        Console.WriteLine("tree");
-        Console.WriteLine(tree.Size);
-        foreach (var info in tree.ChildInfos)
-        {
-          Console.WriteLine($"{info.Mode} {info.Type} {info.Hash} {info.Name}");
-        }
-        return;
-      }
-
-      var commit = ObjectReader.ReadCommitObject(hash);
-      if (commit != null)
-      {
-        Console.WriteLine("commit");
-        Console.WriteLine(commit.Size);
-        Console.WriteLine($"tree {commit.TreeHash}");
-        foreach (var parent in commit.Parents)
-        {
-          Console.WriteLine($"parent {parent}");   
-        }
-        var author = commit.Author;
-        Console.WriteLine($"author {author.Name} <{author.Email}> {author.DateSeconds} {author.DateTimezone}");
-        var committer = commit.Author;
-        Console.WriteLine($"author {committer.Name} <{committer.Email}> {committer.DateSeconds} {committer.DateTimezone}");
-        Console.WriteLine();
-        Console.Write(commit.Message);
-        return;
+        Console.WriteLine($"Not a valid object name {hash}");
       }
     }
   }

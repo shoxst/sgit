@@ -63,6 +63,26 @@ namespace sgit
       }
     }
 
+    public static SgitObject ReadObject(string hash)
+    {
+      var blob = ReadBlobObject(hash);
+      if (blob != null)
+      {
+        return blob;
+      }
+      var tree = ReadTreeObject(hash);
+      if (tree != null)
+      {
+        return tree;
+      }
+      var commit = ReadCommitObject(hash);
+      if (commit != null)
+      {
+        return commit;
+      }
+      return null;
+    }
+
     public static TreeObject ReadTreeObject(string hash)
     {
       var filePath = PathUtil.GetObjectFilePath(hash);
@@ -168,7 +188,7 @@ namespace sgit
       return new CommitObject(treeHash, parents, author, committer, sb.ToString());
     }
 
-    public static string ReadBlobObject(string hash)
+    public static BlobObject ReadBlobObject(string hash)
     {
       var filePath = PathUtil.GetObjectFilePath(hash);
       var cData = File.ReadAllBytes(filePath);
@@ -182,7 +202,9 @@ namespace sgit
 
       var nullIndex = Array.IndexOf(data, (byte)0b00);
       var fileContent = Encoding.UTF8.GetString(data.Skip(nullIndex + 1).Take(data.Length - nullIndex - 1).ToArray());
-      return fileContent;
+      var blob = new BlobObject();
+      blob.FileContent = fileContent;
+      return blob;
     }
   }
 }

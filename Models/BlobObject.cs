@@ -20,10 +20,8 @@ namespace sgit
       this.canWrite = true;
     }
 
-    public BlobObject(string filePath, string hash) : base(ObjectType.blob)
+    public BlobObject() : base(ObjectType.blob)
     {
-      this.FileName = Path.GetFileName(filePath);
-      this.Hash = hash;
       this.canWrite = false;
     }
 
@@ -41,6 +39,13 @@ namespace sgit
         base.Write(Data);
       }
       return Hash;
+    }
+
+    public override void CatFile()
+    {
+      Console.WriteLine("blob");
+      Console.WriteLine(FileContent.Length);
+      Console.WriteLine(FileContent);
     }
   }
 }

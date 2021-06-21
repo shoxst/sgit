@@ -30,6 +30,10 @@ namespace sgit
           Branch.Exec(args);
           break;
         
+        case "tag":
+          Tag.Exec(args);
+          break;
+        
         case "status":
           Status.Exec();
           break;

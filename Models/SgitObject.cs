@@ -3,7 +3,7 @@ using System.IO;
 
 namespace sgit
 {
-  public enum ObjectType { commit, tree, blob }
+  public enum ObjectType { commit, tree, blob, tag }
   
   public abstract class SgitObject
   {
@@ -20,6 +20,8 @@ namespace sgit
     protected abstract string CalculateHash();
 
     public abstract string Write();
+
+    public abstract void CatFile();
 
     public bool Exists() =>
       File.Exists(PathUtil.GetObjectFilePath(Hash));

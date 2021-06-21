@@ -68,5 +68,15 @@ namespace sgit
       }
       return Hash;
     }
+
+    public override void CatFile()
+    {
+      Console.WriteLine("tree");
+      Console.WriteLine(Size);
+      foreach (var info in ChildInfos)
+      {
+        Console.WriteLine($"{info.Mode} {info.Type} {info.Hash} {info.Name}");
+      }
+    }
   }
 }

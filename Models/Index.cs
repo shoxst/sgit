@@ -62,7 +62,10 @@ namespace sgit
       if (depth == dirs.Length - 1)
       {
         var sgitFilePath = string.Join('/', dirs);
-        tree.Children.Add(new BlobObject(sgitFilePath, blobHash));
+        var blob = new BlobObject();
+        blob.FileName = Path.GetFileName(sgitFilePath);
+        blob.Hash = blobHash;
+        tree.Children.Add(blob);
         return;
       }
       if (!tree.Children.Any(child => MatchDirName(child, dirs[depth])))

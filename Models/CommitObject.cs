@@ -37,8 +37,8 @@ namespace sgit
           sb.Append($"parent {parent}\n");
         }
       }
-      sb.Append($"author {Author.Name} <{Author.Email}> {Author.DateSeconds} {Author.DateTimezone}\n");
-      sb.Append($"committer {Committer.Name} <{Committer.Email}> {Committer.DateSeconds} {Committer.DateTimezone}\n");
+      sb.Append($"author {Author.GetString()}\n");
+      sb.Append($"committer {Committer.GetString()}\n");
       sb.Append("\n");
       sb.Append($"{Message}");
       var content = sb.ToString();
@@ -55,10 +55,25 @@ namespace sgit
       return Hash;
     }
 
+    public override void CatFile()
+    {
+      Console.WriteLine("commit");
+      Console.WriteLine(Size);
+      Console.WriteLine($"tree {TreeHash}");
+      foreach (var parent in Parents)
+      {
+        Console.WriteLine($"parent {parent}");   
+      }
+      Console.WriteLine($"author {Author.GetString()}");
+      Console.WriteLine($"author {Committer.GetString()}");
+      Console.WriteLine();
+      Console.Write(Message);
+    }
+
     public void PrintLog()
     {
       var branchNames = Reference.GetAllBranchNames();
-      var branchCommits = branchNames.Select(branchName => Reference.GetCommit(branchName)).ToList();
+      var branchCommits = branchNames.Select(branchName => Reference.GetCommitByBranch(branchName)).ToList();
       var head = Reference.GetHead();
       Console.ForegroundColor = ConsoleColor.Yellow;
       Console.Write($"commit {Hash} ");
@@ -67,7 +82,7 @@ namespace sgit
       {
         Console.ForegroundColor = ConsoleColor.Yellow;
         Console.Write("(");
-        if (Hash == Reference.GetCommit(head))
+        if (Hash == Reference.GetCommitByBranch(head))
         {
           Console.ForegroundColor = ConsoleColor.Cyan;
           Console.Write("HEAD -> ");
@@ -79,7 +94,7 @@ namespace sgit
         foreach (var branchName in branchNames)
         {
           if (branchName == head) continue;
-          if (Hash == Reference.GetCommit(branchName))
+          if (Hash == Reference.GetCommitByBranch(branchName))
           {
             Console.ForegroundColor = ConsoleColor.Green;
             Console.Write($"{branchName}");

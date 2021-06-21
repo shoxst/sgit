@@ -16,5 +16,8 @@ namespace sgit
       DateSeconds = dateSeconds;
       DateTimezone = dateTimeZone;
     }
+
+    public string GetString() =>
+      $"{Name} <{Email}> {DateSeconds} {DateTimezone}";
   }
 }
