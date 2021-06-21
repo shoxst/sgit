@@ -41,8 +41,8 @@ namespace sgit
       var parents = currentCommit == null ? new List<string>() : new List<string>{currentCommit};
       var seconds = (int)DateTimeOffset.Now.ToUnixTimeSeconds();
       var timezone = TimeZoneInfo.Local.DisplayName.Substring(4,6).Replace(":","");
-      var author = new UserInfo("*****", "*****", seconds, timezone);
-      var committer = new UserInfo("*****", "*****", seconds, timezone);
+      var author = new UserInfo(SgitConfig.GetUserName(), SgitConfig.GetUserEmail(), seconds, timezone);
+      var committer = new UserInfo(SgitConfig.GetUserName(), SgitConfig.GetUserEmail(), seconds, timezone);
       var commit = new CommitObject(rootTreeHash, parents, author, committer, message);
       var newCommit = commit.Write();
 

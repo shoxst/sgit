@@ -10,6 +10,7 @@ namespace sgit
     public static readonly string SGIT_DOTSGIT = $"{SGIT_REPOSITORY}/.sgit";
     public static readonly string SGIT_INDEX = $"{SGIT_DOTSGIT}/index";
     public static readonly string SGIT_HEAD = $"{SGIT_DOTSGIT}/HEAD";
+    public static readonly string SGIT_CONFIG = $"{SGIT_DOTSGIT}/config";
     public static readonly string SGIT_OBJECTS = $"{SGIT_DOTSGIT}/objects";
     public static readonly string SGIT_REFS = $"{SGIT_DOTSGIT}/refs";
     public static readonly string SGIT_REFS_HEADS = $"{SGIT_DOTSGIT}/refs/heads";

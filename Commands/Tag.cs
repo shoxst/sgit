@@ -60,7 +60,7 @@ namespace sgit
       var currentCommit = Reference.GetHeadCommit();
       var seconds = (int)DateTimeOffset.Now.ToUnixTimeSeconds();
       var timezone = TimeZoneInfo.Local.DisplayName.Substring(4,6).Replace(":","");
-      var tagger = new UserInfo("*****", "*****", seconds, timezone);
+      var tagger = new UserInfo(SgitConfig.GetUserName(), SgitConfig.GetUserEmail(), seconds, timezone);
       var tag = new TagObject(currentCommit, ObjectType.commit, name, tagger, message);
       var hash = tag.Write();
       Reference.SetHashForTag(name, hash);

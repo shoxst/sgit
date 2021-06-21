@@ -15,6 +15,7 @@ namespace sgit
       Directory.CreateDirectory(PathUtil.SGIT_OBJECTS);
       Directory.CreateDirectory(PathUtil.SGIT_REFS_HEADS);
       Directory.CreateDirectory(PathUtil.SGIT_REFS_TAGS);
+      File.Create(PathUtil.SGIT_CONFIG);
       File.WriteAllText(PathUtil.SGIT_HEAD, "ref: refs/heads/main\n");
     }
   }
